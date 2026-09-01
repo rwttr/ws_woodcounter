@@ -71,7 +71,7 @@ Edit `config.yaml` before running predictions:
 ```yaml
 model: best.pt        # path to trained YOLOv8 weights
 image_dir: images     # directory containing the input image (exactly one file)
-output_dir: results   # directory where count.txt and the annotated image are written
+output_dir: results   # directory where <image>_count.txt and the annotated image are written
 device: cpu           # 'cpu', 'cuda:0', or 'mps'
 confidence: 0.5       # detection confidence threshold
 ```
@@ -97,7 +97,8 @@ python predict.py --image images/sample1.jpg --model best.pt
 The script:
 - Prints the wood piece count to stdout.
 - Saves an annotated PNG to `<output_dir>/sahi_result_image.png`.
-- Writes the integer count to `<output_dir>/count.txt` (overwritten each run).
+- Writes the integer count to `<output_dir>/<image_stem>_count.txt`, e.g.
+  `results/sample1_count.txt` (overwritten each run for that filename).
 
 ## Training workflow
 

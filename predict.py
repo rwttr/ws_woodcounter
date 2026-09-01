@@ -197,7 +197,7 @@ def main() -> None:
     print(f"wood count: {count} pieces")
     print(f"annotated result saved to {args.output_dir / 'sahi_result_image.png'}")
 
-    count_txt = args.output_dir / "count.txt"
+    count_txt = args.output_dir / f"{image_path.stem}_count.txt"
     args.output_dir.mkdir(parents=True, exist_ok=True)
     with open(count_txt, "w") as fh:
         fh.write(f"{count}\n")
