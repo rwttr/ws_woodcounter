@@ -1,0 +1,5 @@
+# Install PyTorch separately before this file — see README for the right command.
+ultralytics==8.4.117
+sahi==0.12.5
+opencv-python==5.0.0.93
+pyyaml==6.0.3

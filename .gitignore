@@ -1,0 +1,13 @@
+_venv/
+__pycache__/
+*.pyc
+*.pt
+runs/
+results/
+images/
+dataset/images/
+dataset/labels/
+labels_export/
+*.egg-info/
+.DS_Store
+*.zip

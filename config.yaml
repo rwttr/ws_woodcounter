@@ -1,0 +1,17 @@
+# Wood Counter — run configuration
+# Pass to predict.py with: python predict.py --config config.yaml
+
+# Path to trained YOLOv8 weights (copied from runs/detect/.../weights/best.pt)
+model: best.pt
+
+# Input image to process
+image_path: images/sample1.jpg
+
+# Text file where the wood-piece count will be written (one integer per line)
+output_txt: results/count.txt
+
+# Inference device: 'cpu', 'cuda:0', 'mps'
+device: cpu
+
+# Detection confidence threshold (0.0–1.0)
+confidence: 0.5
