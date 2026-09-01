@@ -14,7 +14,7 @@ split_dataset.py    Splits labeled images into dataset/images|labels/train|val
 config.yaml         Runtime configuration (image path, model, output file)
 requirements.txt    Python dependencies, incl. CPU-only PyTorch
 classes.txt         Label list for the annotation tool (single class: wood)
-best.pt             Trained weights, committed — ready for inference out of the box
+model.pt            Trained weights, committed — ready for inference out of the box
 yolov8s.pt          Pretrained COCO weights used as the training base model (not committed)
 dataset/            YOLO-format training data
   data.yaml         Dataset config consumed by train.py
@@ -69,7 +69,7 @@ For other CUDA versions visit <https://pytorch.org/get-started/locally/>.
 Edit `config.yaml` before running predictions:
 
 ```yaml
-model: best.pt        # path to trained YOLOv8 weights
+model: model.pt       # path to trained YOLOv8 weights
 image_dir: images     # directory containing the input image (exactly one file)
 output_dir: results   # directory where <image>_count.txt and the annotated image are written
 device: cpu           # 'cpu', 'cuda:0', or 'mps'
@@ -91,7 +91,7 @@ python predict.py --config config.yaml
 python predict.py --config config.yaml --image-dir /path/to/incoming --device cuda:0
 
 # Point directly at a specific image file, skipping directory discovery
-python predict.py --image images/sample1.jpg --model best.pt
+python predict.py --image images/sample1.jpg --model model.pt
 ```
 
 The script:
@@ -131,7 +131,7 @@ python train.py
 After training copy the best weights to the project root:
 
 ```bash
-cp runs/detect/wood_counter/weights/best.pt best.pt
+cp runs/detect/wood_counter/weights/best.pt model.pt
 ```
 
 ### 4. Predict
@@ -144,7 +144,7 @@ python predict.py --config config.yaml
 
 ## Notes
 
-- `best.pt` (the current trained weights) is committed to the repo so the
+- `model.pt` (the current trained weights) is committed to the repo so the
   model is ready to use for inference right after cloning — no training
   required. `images/sample1.jpg` is committed as a ready-to-run test input;
   `results/` is tracked as an empty folder (`.gitkeep`) since its contents

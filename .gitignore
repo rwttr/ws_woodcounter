@@ -2,7 +2,7 @@ _venv/
 __pycache__/
 *.pyc
 *.pt
-!best.pt
+!model.pt
 runs/
 results/*
 !results/.gitkeep

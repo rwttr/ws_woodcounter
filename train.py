@@ -46,7 +46,7 @@ def main() -> None:
 
     best_weights = Path(results.save_dir) / "weights" / "best.pt"
     print(f"training complete, best weights at: {best_weights}")
-    print(f"copy it to the project root to use with predict.py: cp {best_weights} best.pt")
+    print(f"copy it to the project root to use with predict.py: cp {best_weights} model.pt")
 
 
 if __name__ == "__main__":

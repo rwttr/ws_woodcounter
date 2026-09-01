@@ -9,7 +9,7 @@ import cv2
 from sahi import AutoDetectionModel
 from sahi.predict import get_sliced_prediction
 
-DEFAULT_MODEL_PATH = "best.pt"
+DEFAULT_MODEL_PATH = "model.pt"
 DEFAULT_IMAGE_DIR = "images"
 DEFAULT_OUTPUT_DIR = "results"
 DEFAULT_CONFIDENCE_THRESHOLD = 0.5
@@ -130,7 +130,7 @@ def count_wood_pieces(
         raise FileNotFoundError(
             f"Model weights not found: {model_path}\n"
             "Pass a YOLOv8 model trained on wood end-faces with --model, "
-            "e.g. --model best.pt"
+            "e.g. --model model.pt"
         )
 
     detection_model = AutoDetectionModel.from_pretrained(

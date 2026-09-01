@@ -2,7 +2,7 @@
 # Pass to predict.py with: python predict.py --config config.yaml
 
 # Path to trained YOLOv8 weights (copied from runs/detect/.../weights/best.pt)
-model: best.pt
+model: model.pt
 
 # Directory containing the input image. Drop exactly one image file here.
 image_dir: images
