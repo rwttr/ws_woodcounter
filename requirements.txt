@@ -1,5 +1,11 @@
-# Install PyTorch separately before this file — see README for the right command.
-# Tested versions: torch==2.13.0, torchvision==0.28.0
+# CPU-only PyTorch wheels (this project's remote deployment target has no GPU).
+# If installing on a machine with CUDA or Apple Silicon, install torch/torchvision
+# separately first per README, then run `pip install -r requirements.txt --no-deps`
+# for these two lines, or just remove them before installing.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.13.0
+torchvision==0.28.0
+
 ultralytics==8.4.117
 sahi==0.12.5
 opencv-python==5.0.0.93

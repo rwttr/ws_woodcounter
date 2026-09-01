@@ -12,7 +12,7 @@ predict.py          Runs SAHI-sliced detection on an image and counts pieces
 train.py            Fine-tunes YOLOv8 on the labeled dataset
 split_dataset.py    Splits labeled images into dataset/images|labels/train|val
 config.yaml         Runtime configuration (image path, model, output file)
-requirements.txt    Python dependencies (PyTorch installed separately)
+requirements.txt    Python dependencies, incl. CPU-only PyTorch
 classes.txt         Label list for the annotation tool (single class: wood)
 best.pt             Trained weights, committed — ready for inference out of the box
 yolov8s.pt          Pretrained COCO weights used as the training base model (not committed)
@@ -39,25 +39,30 @@ python3 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 ```
 
-### 2. Install PyTorch
-
-PyTorch must be installed before the other dependencies so the correct
-GPU/CPU build is selected for your hardware. Tested versions:
-`torch==2.13.0`, `torchvision==0.28.0`.
-
-| Hardware | Install command |
-|---|---|
-| NVIDIA GPU (CUDA 12.x) | `pip install torch==2.13.0 torchvision==0.28.0 --index-url https://download.pytorch.org/whl/cu121` |
-| CPU only | `pip install torch==2.13.0 torchvision==0.28.0 --index-url https://download.pytorch.org/whl/cpu` |
-| Apple Silicon (MPS) | `pip install torch==2.13.0 torchvision==0.28.0` |
-
-For other CUDA versions visit <https://pytorch.org/get-started/locally/>.
-
-### 3. Install the remaining dependencies
+### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
+
+`requirements.txt` pins CPU-only PyTorch wheels (`torch==2.13.0`,
+`torchvision==0.28.0`) since the target deployment is a CPU-only remote
+server. If you're setting up on a machine with an NVIDIA GPU or Apple
+Silicon and want GPU/MPS acceleration instead, install the matching
+PyTorch build first, then install the rest:
+
+| Hardware | Install command |
+|---|---|
+| NVIDIA GPU (CUDA 12.x) | `pip install torch==2.13.0 torchvision==0.28.0 --index-url https://download.pytorch.org/whl/cu121` |
+| Apple Silicon (MPS) | `pip install torch==2.13.0 torchvision==0.28.0` |
+
+Then install the rest without re-resolving torch:
+
+```bash
+pip install -r requirements.txt --no-deps ultralytics sahi opencv-python pyyaml
+```
+
+For other CUDA versions visit <https://pytorch.org/get-started/locally/>.
 
 ## Configuration
 
