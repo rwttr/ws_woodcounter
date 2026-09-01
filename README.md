@@ -91,7 +91,8 @@ python predict.py --config config.yaml
 python predict.py --config config.yaml --image-dir /path/to/incoming --device cuda:0
 
 # Point directly at a specific image file, skipping directory discovery
-python predict.py --image images/sample1.jpg --model model.pt
+# (--model still comes from config.yaml unless overridden)
+python predict.py --config config.yaml --image images/sample1.jpg
 ```
 
 The script:
