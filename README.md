@@ -20,7 +20,7 @@ dataset/            YOLO-format training data
   data.yaml         Dataset config consumed by train.py
   images/{train,val}
   labels/{train,val}
-images/             Source photos of wood stacks (empty in the repo, tracked via .gitkeep)
+images/             Source photos of wood stacks (sample1.jpg committed as a test image)
 results/            Annotated output images and count .txt files from predict.py (empty in the repo, tracked via .gitkeep)
 runs/               Ultralytics training artefacts
 ```
@@ -69,35 +69,35 @@ For other CUDA versions visit <https://pytorch.org/get-started/locally/>.
 Edit `config.yaml` before running predictions:
 
 ```yaml
-model: best.pt          # path to trained YOLOv8 weights
-image_path: images/sample1.jpg  # input image
-output_txt: results/count.txt   # file where the piece count is written
-device: cpu             # 'cpu', 'cuda:0', or 'mps'
-confidence: 0.5         # detection confidence threshold
+model: best.pt        # path to trained YOLOv8 weights
+image_dir: images     # directory containing the input image (exactly one file)
+output_dir: results   # directory where count.txt and the annotated image are written
+device: cpu           # 'cpu', 'cuda:0', or 'mps'
+confidence: 0.5       # detection confidence threshold
 ```
 
-All fields can also be overridden directly on the command line — CLI flags
-take precedence over the config file.
+`image_dir` must contain exactly one image — drop the photo to process there
+and remove any others. All fields can also be overridden directly on the
+command line — CLI flags take precedence over the config file, and `--image`
+can point at a specific file to bypass directory auto-discovery entirely.
 
 ## Running predictions
 
 ```bash
-# Using the config file
+# Using the config file (processes the single image in images/)
 python predict.py --config config.yaml
 
 # Override individual values without editing config.yaml
-python predict.py --config config.yaml --image images/sample2.jpg --device cuda:0
+python predict.py --config config.yaml --image-dir /path/to/incoming --device cuda:0
 
-# Without a config file (all defaults from predict.py constants)
+# Point directly at a specific image file, skipping directory discovery
 python predict.py --image images/sample1.jpg --model best.pt
 ```
 
 The script:
 - Prints the wood piece count to stdout.
-- Saves an annotated PNG to `results/sahi_result_image.png`.
-- Writes the integer count to the file specified by `output_txt` (one number
-  per line, so repeated runs append cleanly if you redirect stdout, but the
-  file is overwritten each run).
+- Saves an annotated PNG to `<output_dir>/sahi_result_image.png`.
+- Writes the integer count to `<output_dir>/count.txt` (overwritten each run).
 
 ## Training workflow
 
@@ -145,9 +145,9 @@ python predict.py --config config.yaml
 
 - `best.pt` (the current trained weights) is committed to the repo so the
   model is ready to use for inference right after cloning — no training
-  required. `images/` and `results/` are tracked as empty folders
-  (`.gitkeep`) for clarity; their contents (source photos, prediction
-  outputs) are gitignored.
+  required. `images/sample1.jpg` is committed as a ready-to-run test input;
+  `results/` is tracked as an empty folder (`.gitkeep`) since its contents
+  are generated output and gitignored.
 - The default `device` in `config.yaml` is `cpu` for remote-server
   compatibility. Change to `cuda:0` to use a GPU.
 - This is a POC trained on a small set of photos — expect it to overfit to

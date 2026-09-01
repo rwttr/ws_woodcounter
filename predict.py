@@ -10,10 +10,12 @@ from sahi import AutoDetectionModel
 from sahi.predict import get_sliced_prediction
 
 DEFAULT_MODEL_PATH = "best.pt"
-DEFAULT_IMAGE_PATH = "images/sample1.jpg"
-DEFAULT_EXPORT_DIR = "results"
+DEFAULT_IMAGE_DIR = "images"
+DEFAULT_OUTPUT_DIR = "results"
 DEFAULT_CONFIDENCE_THRESHOLD = 0.5
 DEFAULT_DEVICE = "mps"
+
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 
 # Sliding-window size and overlap used by SAHI to tile the image before inference.
 SLICE_HEIGHT = 256
@@ -37,10 +39,10 @@ HULL_COLOR_BGR = (0, 255, 0)
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Count wood pieces in an image via SAHI + YOLOv8.")
     parser.add_argument("--config", type=Path, default=None, help="Path to a YAML config file (config.yaml). CLI flags override config values.")
-    parser.add_argument("--image", type=Path, default=None, help="Path to the input image.")
+    parser.add_argument("--image", type=Path, default=None, help="Path to a specific input image, overriding directory auto-discovery.")
+    parser.add_argument("--image-dir", type=Path, default=None, help="Directory containing exactly one input image to process.")
     parser.add_argument("--model", type=Path, default=None, help="Path to the YOLOv8 weights file.")
-    parser.add_argument("--output-txt", type=Path, default=None, help="Text file to write the detected piece count to.")
-    parser.add_argument("--export-dir", type=Path, default=Path(DEFAULT_EXPORT_DIR), help="Directory to save the annotated result image.")
+    parser.add_argument("--output-dir", type=Path, default=None, help="Directory to write the count .txt and annotated result image to.")
     parser.add_argument("--confidence", type=float, default=None, help="Detection confidence threshold.")
     parser.add_argument("--device", default=None, help="Inference device, e.g. 'cuda:0', 'cpu', or 'mps'.")
     parser.add_argument("--min-aspect-ratio", type=float, default=DEFAULT_MIN_ASPECT_RATIO, help="Reject detections narrower (width/height) than this ratio.")
@@ -54,18 +56,35 @@ def parse_args() -> argparse.Namespace:
         with open(args.config) as fh:
             cfg = yaml.safe_load(fh) or {}
 
-    if args.image is None:
-        args.image = Path(cfg.get("image_path", DEFAULT_IMAGE_PATH))
+    if args.image_dir is None:
+        args.image_dir = Path(cfg.get("image_dir", DEFAULT_IMAGE_DIR))
     if args.model is None:
         args.model = Path(cfg.get("model", DEFAULT_MODEL_PATH))
-    if args.output_txt is None and "output_txt" in cfg:
-        args.output_txt = Path(cfg["output_txt"])
+    if args.output_dir is None:
+        args.output_dir = Path(cfg.get("output_dir", DEFAULT_OUTPUT_DIR))
     if args.confidence is None:
         args.confidence = float(cfg.get("confidence", DEFAULT_CONFIDENCE_THRESHOLD))
     if args.device is None:
         args.device = cfg.get("device", DEFAULT_DEVICE)
 
     return args
+
+
+def resolve_input_image(image_dir: Path) -> Path:
+    """Find the single input image in image_dir (drop exactly one image there)."""
+    if not image_dir.is_dir():
+        raise FileNotFoundError(f"Image directory not found: {image_dir}")
+
+    images = sorted(p for p in image_dir.iterdir() if p.suffix.lower() in IMAGE_EXTENSIONS)
+    if not images:
+        raise FileNotFoundError(f"No image found in {image_dir}. Place exactly one image there.")
+    if len(images) > 1:
+        names = ", ".join(p.name for p in images)
+        raise FileNotFoundError(
+            f"Expected exactly one image in {image_dir}, found {len(images)}: {names}. "
+            "Keep only the image to process there, or pass --image to pick one explicitly."
+        )
+    return images[0]
 
 
 def draw_result_overlay(image_path: Path, lines: list[str], hull_box: tuple[float, float, float, float] | None) -> None:
@@ -97,7 +116,7 @@ def draw_result_overlay(image_path: Path, lines: list[str], hull_box: tuple[floa
 def count_wood_pieces(
     image_path: Path,
     model_path: Path,
-    export_dir: Path,
+    output_dir: Path,
     confidence: float,
     device: str,
     min_aspect_ratio: float,
@@ -154,9 +173,9 @@ def count_wood_pieces(
             max(box.maxy for box in boxes),
         )
 
-    export_dir.mkdir(parents=True, exist_ok=True)
-    output_path = export_dir / "sahi_result_image.png"
-    result.export_visuals(export_dir=str(export_dir), file_name="sahi_result_image", hide_labels=True, hide_conf=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / "sahi_result_image.png"
+    result.export_visuals(export_dir=str(output_dir), file_name="sahi_result_image", hide_labels=True, hide_conf=True)
     draw_result_overlay(output_path, info_lines, hull_box)
 
     return count
@@ -164,10 +183,11 @@ def count_wood_pieces(
 
 def main() -> None:
     args = parse_args()
+    image_path = args.image if args.image is not None else resolve_input_image(args.image_dir)
     count = count_wood_pieces(
-        image_path=args.image,
+        image_path=image_path,
         model_path=args.model,
-        export_dir=args.export_dir,
+        output_dir=args.output_dir,
         confidence=args.confidence,
         device=args.device,
         min_aspect_ratio=args.min_aspect_ratio,
@@ -175,13 +195,13 @@ def main() -> None:
         piece_size=args.piece_size,
     )
     print(f"wood count: {count} pieces")
-    print(f"annotated result saved to {args.export_dir / 'sahi_result_image.png'}")
+    print(f"annotated result saved to {args.output_dir / 'sahi_result_image.png'}")
 
-    if args.output_txt is not None:
-        args.output_txt.parent.mkdir(parents=True, exist_ok=True)
-        with open(args.output_txt, "w") as fh:
-            fh.write(f"{count}\n")
-        print(f"count written to {args.output_txt}")
+    count_txt = args.output_dir / "count.txt"
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    with open(count_txt, "w") as fh:
+        fh.write(f"{count}\n")
+    print(f"count written to {count_txt}")
 
 
 if __name__ == "__main__":

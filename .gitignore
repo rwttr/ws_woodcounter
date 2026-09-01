@@ -8,6 +8,7 @@ results/*
 !results/.gitkeep
 images/*
 !images/.gitkeep
+!images/sample1.jpg
 dataset/images/
 dataset/labels/
 labels_export/

@@ -4,11 +4,11 @@
 # Path to trained YOLOv8 weights (copied from runs/detect/.../weights/best.pt)
 model: best.pt
 
-# Input image to process
-image_path: images/sample1.jpg
+# Directory containing the input image. Drop exactly one image file here.
+image_dir: images
 
-# Text file where the wood-piece count will be written (one integer per line)
-output_txt: results/count.txt
+# Directory where count.txt and the annotated result image are written
+output_dir: results
 
 # Inference device: 'cpu', 'cuda:0', 'mps'
 device: cpu
