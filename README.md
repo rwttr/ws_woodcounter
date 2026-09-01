@@ -14,14 +14,14 @@ split_dataset.py    Splits labeled images into dataset/images|labels/train|val
 config.yaml         Runtime configuration (image path, model, output file)
 requirements.txt    Python dependencies (PyTorch installed separately)
 classes.txt         Label list for the annotation tool (single class: wood)
-best.pt             Trained weights (not committed — copy from runs/ after training)
-yolov8s.pt          Pretrained COCO weights used as the training base model
+best.pt             Trained weights, committed — ready for inference out of the box
+yolov8s.pt          Pretrained COCO weights used as the training base model (not committed)
 dataset/            YOLO-format training data
   data.yaml         Dataset config consumed by train.py
   images/{train,val}
   labels/{train,val}
-images/             Source photos of wood stacks
-results/            Annotated output images and count .txt files from predict.py
+images/             Source photos of wood stacks (empty in the repo, tracked via .gitkeep)
+results/            Annotated output images and count .txt files from predict.py (empty in the repo, tracked via .gitkeep)
 runs/               Ultralytics training artefacts
 ```
 
@@ -135,8 +135,11 @@ python predict.py --config config.yaml
 
 ## Notes
 
-- `best.pt` is excluded from version control (`.gitignore`). Copy it to the
-  server alongside the project before running predictions.
+- `best.pt` (the current trained weights) is committed to the repo so the
+  model is ready to use for inference right after cloning — no training
+  required. `images/` and `results/` are tracked as empty folders
+  (`.gitkeep`) for clarity; their contents (source photos, prediction
+  outputs) are gitignored.
 - The default `device` in `config.yaml` is `cpu` for remote-server
   compatibility. Change to `cuda:0` to use a GPU.
 - This is a POC trained on a small set of photos — expect it to overfit to
