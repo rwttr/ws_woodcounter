@@ -95,6 +95,11 @@ python predict.py --config config.yaml --image-dir /path/to/incoming --device cu
 python predict.py --config config.yaml --image images/sample1.jpg
 ```
 
+`--config` is optional — without it, `predict.py` falls back to its
+built-in defaults (`model.pt`, `images/`, `results/`, confidence `0.5`,
+device `mps`). On a CPU-only remote server, always pass `--config
+config.yaml` (or `--device cpu` explicitly) so it doesn't default to `mps`.
+
 The script:
 - Prints the wood piece count to stdout.
 - Saves an annotated PNG to `<output_dir>/sahi_result_image.png`.
