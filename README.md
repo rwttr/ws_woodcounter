@@ -93,6 +93,10 @@ python predict.py --config config.yaml --image-dir /path/to/incoming --device cu
 # Point directly at a specific image file, skipping directory discovery
 # (--model still comes from config.yaml unless overridden)
 python predict.py --config config.yaml --image images/sample1.jpg
+
+# Without --config at all (uses predict.py's built-in defaults; pass
+# --device explicitly on a CPU-only server, since the built-in default is mps)
+python predict.py --image images/sample1.jpg --model model.pt --device cpu
 ```
 
 `--config` is optional — without it, `predict.py` falls back to its
