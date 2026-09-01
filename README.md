@@ -129,10 +129,18 @@ python train.py
 # Key flags: --epochs, --batch, --imgsz, --device, --base-model
 ```
 
-After training copy the best weights to the project root:
+After training, copy the best weights to the project root under a new-model
+name first, so you don't overwrite the model currently used for inference:
 
 ```bash
-cp runs/detect/wood_counter/weights/best.pt model.pt
+cp runs/detect/wood_counter/weights/best.pt model_new.pt
+```
+
+Evaluate `model_new.pt` (e.g. rerun `predict.py --model model_new.pt` against
+some known images) and only replace the in-use model once you're satisfied:
+
+```bash
+mv model_new.pt model.pt
 ```
 
 ### 4. Predict
@@ -145,11 +153,13 @@ python predict.py --config config.yaml
 
 ## Notes
 
-- `model.pt` (the current trained weights) is committed to the repo so the
-  model is ready to use for inference right after cloning — no training
-  required. `images/sample1.jpg` is committed as a ready-to-run test input;
-  `results/` is tracked as an empty folder (`.gitkeep`) since its contents
-  are generated output and gitignored.
+- `model.pt` (the current in-use trained weights) is committed to the repo
+  so the model is ready for inference right after cloning — no training
+  required. Newly trained candidates are saved as `model_new.pt`
+  (gitignored, like all other `*.pt` files) so you can validate them before
+  promoting one to `model.pt`. `images/sample1.jpg` is committed as a
+  ready-to-run test input; `results/` is tracked as an empty folder
+  (`.gitkeep`) since its contents are generated output and gitignored.
 - The default `device` in `config.yaml` is `cpu` for remote-server
   compatibility. Change to `cuda:0` to use a GPU.
 - This is a POC trained on a small set of photos — expect it to overfit to
