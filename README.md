@@ -42,13 +42,14 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 ### 2. Install PyTorch
 
 PyTorch must be installed before the other dependencies so the correct
-GPU/CPU build is selected for your hardware.
+GPU/CPU build is selected for your hardware. Tested versions:
+`torch==2.13.0`, `torchvision==0.28.0`.
 
 | Hardware | Install command |
 |---|---|
-| NVIDIA GPU (CUDA 12.x) | `pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121` |
-| CPU only | `pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu` |
-| Apple Silicon (MPS) | `pip install torch torchvision` |
+| NVIDIA GPU (CUDA 12.x) | `pip install torch==2.13.0 torchvision==0.28.0 --index-url https://download.pytorch.org/whl/cu121` |
+| CPU only | `pip install torch==2.13.0 torchvision==0.28.0 --index-url https://download.pytorch.org/whl/cpu` |
+| Apple Silicon (MPS) | `pip install torch==2.13.0 torchvision==0.28.0` |
 
 For other CUDA versions visit <https://pytorch.org/get-started/locally/>.
 
