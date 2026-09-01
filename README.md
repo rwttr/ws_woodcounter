@@ -30,6 +30,8 @@ runs/               Ultralytics training artefacts
 > The `_venv/` directory is local only and is not committed. Create a fresh
 > virtual environment on every machine.
 
+**Requires Python 3.14** (developed and tested against 3.14.6).
+
 ### 1. Create a virtual environment
 
 ```bash
